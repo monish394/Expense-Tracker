@@ -2,8 +2,8 @@ import axios from 'axios';
 
 // Create an instance of axios
 const api = axios.create({
-    // Use the production API URL from env variables if it exists, otherwise use '/api' (dev proxy)
-    baseURL: import.meta.env.VITE_API_URL || '/api',
+    // Using a relative path ensures the browser uses the current domain (e.g., your Render URL)
+    baseURL: '/api',
     headers: {
         'Content-Type': 'application/json',
     },
