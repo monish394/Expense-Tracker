@@ -23,7 +23,7 @@ export const analyzeReceipt = async (req, res) => {
 
         // Initialize Gemini with standard SDK
         const genAI = new GoogleGenerativeAI(apiKey);
-        const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+        const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash-latest" });
 
         // Fetch image and convert to base64
         const resp = await axios.get(imageUrl, { responseType: 'arraybuffer' });
