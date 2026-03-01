@@ -11,6 +11,7 @@ import {
     KeyRound,
     ChevronDown,
     X,
+    Menu,
     Camera,
     Check,
     AlertCircle
@@ -21,6 +22,7 @@ const Navbar = () => {
     const { logout, user } = useAuth();
     const location = useLocation();
     const [showProfileMenu, setShowProfileMenu] = useState(false);
+    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [showEditProfile, setShowEditProfile] = useState(false);
     const [showChangePassword, setShowChangePassword] = useState(false);
     const dropdownRef = useRef(null);
@@ -41,23 +43,28 @@ const Navbar = () => {
         return () => document.removeEventListener('mousedown', handler);
     }, []);
 
+    // Close mobile menu on route change
+    useEffect(() => {
+        setIsMobileMenuOpen(false);
+    }, [location]);
+
     return (
         <>
             <nav className="border-b border-white/5 bg-slate-900/70 backdrop-blur-md sticky top-0 z-30">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="flex justify-between h-16 items-center">
-                        {/* Logo */}
+                        {/* Left Side: Logo & Desktop Links */}
                         <div className="flex items-center gap-8">
                             <Link to="/dashboard" className="flex items-center gap-2 group">
                                 <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-lg flex items-center justify-center shadow-lg shadow-blue-500/20 group-hover:scale-110 transition-transform">
                                     <LayoutDashboard className="w-4 h-4 text-white" />
                                 </div>
                                 <span className="text-xl font-bold bg-gradient-to-r from-white to-slate-400 bg-clip-text text-transparent">
-                                    ExpenseTrack
+                                    ExpTrack
                                 </span>
                             </Link>
 
-                            <div className="hidden md:flex items-center gap-1">
+                            <div className="hidden lg:flex items-center gap-1">
                                 {navItems.map((item) => (
                                     <Link
                                         key={item.path}
@@ -74,83 +81,85 @@ const Navbar = () => {
                             </div>
                         </div>
 
-                        {/* Profile Dropdown */}
-                        <div className="relative" ref={dropdownRef}>
-                            <button
-                                onClick={() => setShowProfileMenu(p => !p)}
-                                className="flex items-center gap-2.5 p-1.5 rounded-xl hover:bg-white/5 transition-all group"
-                            >
-                                {/* Avatar */}
-                                {user?.profileImage ? (
-                                    <img src={user.profileImage} alt="avatar" className="w-9 h-9 rounded-xl object-cover ring-2 ring-blue-500/30" />
-                                ) : (
-                                    <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-bold text-sm shadow-lg shadow-blue-500/20">
-                                        {user?.name?.charAt(0)?.toUpperCase() || 'U'}
-                                    </div>
-                                )}
-                                <div className="hidden sm:block text-left">
-                                    <p className="text-sm font-semibold text-white leading-none">{user?.name}</p>
-                                    <p className="text-xs text-slate-500 mt-0.5 truncate max-w-[120px]">{user?.email}</p>
-                                </div>
-                                <ChevronDown className={`w-4 h-4 text-slate-400 transition-transform duration-200 ${showProfileMenu ? 'rotate-180' : ''}`} />
-                            </button>
+                        {/* Right Side: Profile & Mobile Menu Toggle */}
+                        <div className="flex items-center gap-2">
+                            {/* Profile Dropdown */}
+                            <div className="relative" ref={dropdownRef}>
+                                <button
+                                    onClick={() => setShowProfileMenu(p => !p)}
+                                    className="flex items-center gap-2 p-1 rounded-xl hover:bg-white/5 transition-all"
+                                >
+                                    {user?.profileImage ? (
+                                        <img src={user.profileImage} alt="avatar" className="w-8 h-8 rounded-lg object-cover ring-2 ring-blue-500/30" />
+                                    ) : (
+                                        <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-bold text-xs">
+                                            {user?.name?.charAt(0)?.toUpperCase()}
+                                        </div>
+                                    )}
+                                    <ChevronDown className={`w-3.5 h-3.5 text-slate-400 transition-transform ${showProfileMenu ? 'rotate-180' : ''}`} />
+                                </button>
 
-                            <AnimatePresence>
-                                {showProfileMenu && (
-                                    <motion.div
-                                        initial={{ opacity: 0, y: 8, scale: 0.95 }}
-                                        animate={{ opacity: 1, y: 0, scale: 1 }}
-                                        exit={{ opacity: 0, y: 8, scale: 0.95 }}
-                                        transition={{ duration: 0.15 }}
-                                        className="absolute right-0 mt-2 w-60 bg-slate-900 border border-white/10 rounded-2xl shadow-2xl shadow-black/60 overflow-hidden z-50"
-                                    >
-                                        {/* Header */}
-                                        <div className="p-4 border-b border-white/5 bg-gradient-to-br from-blue-600/10 to-purple-600/5">
-                                            <div className="flex items-center gap-3">
-                                                {user?.profileImage ? (
-                                                    <img src={user.profileImage} alt="avatar" className="w-11 h-11 rounded-xl object-cover ring-2 ring-white/10" />
-                                                ) : (
-                                                    <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-bold text-lg shadow-lg">
-                                                        {user?.name?.charAt(0)?.toUpperCase()}
-                                                    </div>
-                                                )}
-                                                <div className="overflow-hidden">
-                                                    <p className="text-sm font-bold text-white truncate">{user?.name}</p>
-                                                    <p className="text-xs text-slate-400 truncate">{user?.email}</p>
-                                                </div>
+                                <AnimatePresence>
+                                    {showProfileMenu && (
+                                        <motion.div
+                                            initial={{ opacity: 0, y: 8, scale: 0.95 }}
+                                            animate={{ opacity: 1, y: 0, scale: 1 }}
+                                            exit={{ opacity: 0, y: 8, scale: 0.95 }}
+                                            className="absolute right-0 mt-2 w-56 bg-slate-900 border border-white/10 rounded-2xl shadow-2xl overflow-hidden z-50"
+                                        >
+                                            <div className="p-4 border-b border-white/5 bg-white/5">
+                                                <p className="text-sm font-bold text-white truncate">{user?.name}</p>
+                                                <p className="text-xs text-slate-400 truncate">{user?.email}</p>
                                             </div>
-                                        </div>
+                                            <div className="p-1">
+                                                <MenuButton icon={<User className="w-3.5 h-3.5" />} label="Edit Profile" onClick={() => { setShowEditProfile(true); setShowProfileMenu(false); }} />
+                                                <MenuButton icon={<KeyRound className="w-3.5 h-3.5" />} label="Security" onClick={() => { setShowChangePassword(true); setShowProfileMenu(false); }} />
+                                                <div className="h-px bg-white/5 my-1" />
+                                                <MenuButton icon={<LogOut className="w-3.5 h-3.5 text-rose-400" />} label="Sign Out" labelClass="text-rose-400" onClick={logout} />
+                                            </div>
+                                        </motion.div>
+                                    )}
+                                </AnimatePresence>
+                            </div>
 
-                                        {/* Actions */}
-                                        <div className="p-2 space-y-0.5">
-                                            <MenuButton
-                                                icon={<User className="w-3.5 h-3.5 text-blue-400" />}
-                                                iconBg="bg-blue-500/10"
-                                                label="Edit Profile"
-                                                onClick={() => { setShowEditProfile(true); setShowProfileMenu(false); }}
-                                            />
-                                            <MenuButton
-                                                icon={<KeyRound className="w-3.5 h-3.5 text-purple-400" />}
-                                                iconBg="bg-purple-500/10"
-                                                label="Change Password"
-                                                onClick={() => { setShowChangePassword(true); setShowProfileMenu(false); }}
-                                            />
-                                        </div>
-                                        <div className="p-2 border-t border-white/5">
-                                            <MenuButton
-                                                icon={<LogOut className="w-3.5 h-3.5 text-rose-400" />}
-                                                iconBg="bg-rose-500/10"
-                                                label="Sign Out"
-                                                labelClass="text-rose-400 hover:text-rose-300"
-                                                onClick={() => { logout(); setShowProfileMenu(false); }}
-                                            />
-                                        </div>
-                                    </motion.div>
-                                )}
-                            </AnimatePresence>
+                            {/* Mobile Toggle */}
+                            <button
+                                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                                className="lg:hidden p-2 rounded-xl bg-white/5 text-slate-400 hover:text-white"
+                            >
+                                {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+                            </button>
                         </div>
                     </div>
                 </div>
+
+                {/* Mobile Menu Content */}
+                <AnimatePresence>
+                    {isMobileMenuOpen && (
+                        <motion.div
+                            initial={{ height: 0, opacity: 0 }}
+                            animate={{ height: 'auto', opacity: 1 }}
+                            exit={{ height: 0, opacity: 0 }}
+                            className="lg:hidden border-t border-white/5 overflow-hidden bg-slate-900/90 backdrop-blur-xl"
+                        >
+                            <div className="p-4 space-y-2">
+                                {navItems.map((item) => (
+                                    <Link
+                                        key={item.path}
+                                        to={item.path}
+                                        className={`flex items-center gap-3 p-3 rounded-xl transition-all ${location.pathname === item.path
+                                            ? 'bg-blue-600 text-white shadow-lg shadow-blue-500/20'
+                                            : 'text-slate-400 hover:bg-white/5'
+                                            }`}
+                                    >
+                                        <item.icon className="w-5 h-5" />
+                                        <span className="font-medium text-base">{item.label}</span>
+                                    </Link>
+                                ))}
+                            </div>
+                        </motion.div>
+                    )}
+                </AnimatePresence>
             </nav>
 
             <AnimatePresence>
