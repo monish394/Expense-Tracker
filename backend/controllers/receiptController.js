@@ -21,11 +21,15 @@ export const analyzeReceipt = async (req, res) => {
             throw new Error('AI component not configured correctly on server.');
         }
 
-        // Initialize Gemini with stable v1 API
+        // Initialize Gemini
         const genAI = new GoogleGenerativeAI(apiKey);
-        const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" }, { apiVersion: 'v1' });
 
-        // Fetch image and convert to base64
+        // List of models to try in case of 404/availability issues
+        const modelsToTry = ["gemini-1.5-flash", "gemini-1.5-flash-8b", "gemini-1.5-flash-002"];
+        let result = null;
+        let lastError = null;
+
+        console.log('Fetching image from Cloudinary...');
         const resp = await axios.get(imageUrl, { responseType: 'arraybuffer' });
         const imageBase64 = Buffer.from(resp.data).toString('base64');
         const mimeType = req.file.mimetype;
@@ -38,11 +42,27 @@ export const analyzeReceipt = async (req, res) => {
 
 Return ONLY a raw JSON object. No markdown.`;
 
-        console.log('Sending to Gemini...');
-        const result = await model.generateContent([
-            prompt,
-            { inlineData: { data: imageBase64, mimeType } }
-        ]);
+        // Try models one by one
+        for (const modelName of modelsToTry) {
+            try {
+                console.log(`Trying model: ${modelName}...`);
+                const model = genAI.getGenerativeModel({ model: modelName });
+                result = await model.generateContent([
+                    prompt,
+                    { inlineData: { data: imageBase64, mimeType } }
+                ]);
+                console.log(`Success with model: ${modelName}`);
+                break; // Exit loop on success
+            } catch (err) {
+                console.warn(`Model ${modelName} failed:`, err.message);
+                lastError = err;
+                if (!err.message.includes('404')) break; // If it's not a 404 (e.g. Quota), don't bother trying others
+            }
+        }
+
+        if (!result) {
+            throw new Error(`All Gemini models failed. Last error: ${lastError?.message}`);
+        }
 
         const textResponse = result.response.text();
         console.log('AI Raw Output:', textResponse);
