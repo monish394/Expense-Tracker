@@ -63,9 +63,16 @@ Return ONLY a raw JSON object. No markdown.`;
 
     } catch (error) {
         console.error('CRITICAL SCAN ERROR:', error);
+
+        // Extract the most useful error message
+        let details = error.message;
+        if (error.response?.data?.error?.message) {
+            details = error.response.data.error.message;
+        }
+
         res.status(500).json({
-            message: 'AI scanning failed. Please enter details manually.',
-            details: error.message
+            message: 'AI scanning failed',
+            details: details
         });
     }
 };

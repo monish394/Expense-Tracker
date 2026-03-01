@@ -98,8 +98,10 @@ const AddExpensePage = () => {
             });
             setScanResults(data.imageUrl);
         } catch (err) {
-            const errorMsg = err.response?.data?.message || err.message || 'AI Scanning failed';
-            setError(`AI Error: ${errorMsg}. Please fill manually.`);
+            const data = err.response?.data;
+            const errorMsg = data?.message || err.message || 'AI Scanning failed';
+            const details = data?.details ? ` (${data.details})` : '';
+            setError(`AI Error: ${errorMsg}${details}`);
             console.error('Scan Error:', err);
         } finally {
             setScanning(false);
