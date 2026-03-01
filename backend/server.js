@@ -48,8 +48,13 @@ app.get('/api/health', (req, res) => {
     res.json({ message: 'Server is running perfectly!' });
 });
 
-// For any other route, serve index.html if it exists, otherwise return 404
-app.get('/:path*', (req, res) => {
+// For any other route (SPA catch-all), serve index.html if it exists, otherwise return 404
+app.use((req, res) => {
+    // If the request is for an API route that doesn't exist, return a 404 JSON instead of index.html
+    if (req.url.startsWith('/api')) {
+        return res.status(404).json({ message: `API route ${req.url} not found` });
+    }
+
     if (fs.existsSync(indexFile)) {
         res.sendFile(indexFile);
     } else {
