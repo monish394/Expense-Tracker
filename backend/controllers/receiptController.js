@@ -21,9 +21,9 @@ export const analyzeReceipt = async (req, res) => {
             throw new Error('AI component not configured correctly on server.');
         }
 
-        // Initialize Gemini with standard SDK
+        // Initialize Gemini with stable v1 API
         const genAI = new GoogleGenerativeAI(apiKey);
-        const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash-latest" });
+        const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" }, { apiVersion: 'v1' });
 
         // Fetch image and convert to base64
         const resp = await axios.get(imageUrl, { responseType: 'arraybuffer' });
