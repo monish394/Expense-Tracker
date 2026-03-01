@@ -62,7 +62,7 @@ app.get('*', (req, res) => {
     }
 });
 
-// Start Server
+// Start Serverrrr
 app.listen(PORT, () => {
     console.log(`🚀 Server is running on port ${PORT}`);
     console.log(`🌍 Mode: ${process.env.NODE_ENV || 'development'}`);
