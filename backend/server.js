@@ -21,7 +21,12 @@ const PORT = process.env.PORT || 5000;
 connectDB();
 
 // Middleware
-app.use(cors());
+const corsOptions = {
+    origin: process.env.FRONTEND_URL || 'http://localhost:5173',
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    credentials: true,
+};
+app.use(cors(corsOptions));
 app.use(express.json());
 
 // Routes
@@ -34,6 +39,14 @@ app.use('/api/receipts', receiptRoutes);
 app.get('/api/health', (req, res) => {
     res.json({ message: 'Server is running perfectly!' });
 });
+
+// Serve frontend in production
+if (process.env.NODE_ENV === 'production') {
+    app.use(express.static(path.join(__dirname, '../dist')));
+    app.get('*', (req, res) => {
+        res.sendFile(path.resolve(__dirname, '../dist', 'index.html'));
+    });
+}
 
 // Start Server
 app.listen(PORT, () => {

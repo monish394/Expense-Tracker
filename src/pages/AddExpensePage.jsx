@@ -13,7 +13,7 @@ import {
     UploadCloud,
     Sparkles
 } from 'lucide-react';
-import axios from 'axios';
+import api from '../api/axios';
 import Navbar from '../components/Navbar';
 
 const AddExpensePage = () => {
@@ -38,10 +38,7 @@ const AddExpensePage = () => {
     useEffect(() => {
         const fetchCategories = async () => {
             try {
-                const config = {
-                    headers: { Authorization: `Bearer ${user.token}` },
-                };
-                const { data } = await axios.get('/api/categories', config);
+                const { data } = await api.get('/categories');
                 setCategories(data);
                 if (data.length > 0 && !editId) {
                     setFormData(prev => ({ ...prev, category: data[0].name }));
@@ -54,10 +51,7 @@ const AddExpensePage = () => {
         const fetchExpenseData = async () => {
             if (editId) {
                 try {
-                    const config = {
-                        headers: { Authorization: `Bearer ${user.token}` },
-                    };
-                    const { data } = await axios.get('/api/expenses', config);
+                    const { data } = await api.get('/expenses');
                     const expense = data.find(e => e._id === editId);
                     if (expense) {
                         setFormData({
@@ -93,13 +87,7 @@ const AddExpensePage = () => {
         scanData.append('receipt', file);
 
         try {
-            const config = {
-                headers: {
-                    'Content-Type': 'multipart/form-data',
-                    Authorization: `Bearer ${user.token}`
-                },
-            };
-            const { data } = await axios.post('/api/receipts/analyze', scanData, config);
+            const { data } = await api.post('/receipts/analyze', scanData);
 
             // Prefill form
             setFormData({
@@ -123,14 +111,10 @@ const AddExpensePage = () => {
         setError('');
 
         try {
-            const config = {
-                headers: { Authorization: `Bearer ${user.token}` },
-            };
-
             if (editId) {
-                await axios.put(`/api/expenses/${editId}`, formData, config);
+                await api.put(`/expenses/${editId}`, formData);
             } else {
-                await axios.post('/api/expenses', formData, config);
+                await api.post('/expenses', formData);
             }
             navigate('/expenses');
         } catch (err) {

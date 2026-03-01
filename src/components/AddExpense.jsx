@@ -1,7 +1,4 @@
-import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Plus, X, Tag, IndianRupee, Calendar, Type } from 'lucide-react';
-import axios from 'axios';
+import api from '../api/axios';
 import { useAuth } from '../context/AuthContext';
 
 const AddExpense = ({ onExpenseAdded, expenseToEdit, onClose, mode = 'add' }) => {
@@ -27,18 +24,12 @@ const AddExpense = ({ onExpenseAdded, expenseToEdit, onClose, mode = 'add' }) =>
         setError('');
 
         try {
-            const config = {
-                headers: {
-                    Authorization: `Bearer ${user.token}`,
-                },
-            };
-
             let data;
             if (mode === 'edit') {
-                const response = await axios.put(`/api/expenses/${expenseToEdit._id}`, formData, config);
+                const response = await api.put(`/expenses/${expenseToEdit._id}`, formData);
                 data = response.data;
             } else {
-                const response = await axios.post('/api/expenses', formData, config);
+                const response = await api.post('/expenses', formData);
                 data = response.data;
             }
 

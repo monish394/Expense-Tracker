@@ -15,7 +15,7 @@ import {
     Tag,
     ArrowRight
 } from 'lucide-react';
-import axios from 'axios';
+import api from '../api/axios';
 import {
     PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend,
     AreaChart, Area, XAxis, YAxis, CartesianGrid, BarChart, Bar
@@ -34,14 +34,9 @@ const Dashboard = () => {
 
     const fetchData = async () => {
         try {
-            const config = {
-                headers: {
-                    Authorization: `Bearer ${user.token}`,
-                },
-            };
             const [expRes, catRes] = await Promise.all([
-                axios.get('/api/expenses', config),
-                axios.get('/api/categories', config)
+                api.get('/expenses'),
+                api.get('/categories')
             ]);
             setExpenses(expRes.data);
             setCategories(catRes.data);
@@ -60,8 +55,7 @@ const Dashboard = () => {
         e.preventDefault();
         if (!newCatName.trim()) return;
         try {
-            const config = { headers: { Authorization: `Bearer ${user.token}` } };
-            const { data } = await axios.post('/api/categories', { name: newCatName }, config);
+            const { data } = await api.post('/categories', { name: newCatName });
             setCategories([...categories, data]);
             setNewCatName('');
         } catch (err) {
@@ -72,8 +66,7 @@ const Dashboard = () => {
     const handleDeleteCategory = async (id) => {
         if (!window.confirm('Are you sure? This will not delete expenses in this category.')) return;
         try {
-            const config = { headers: { Authorization: `Bearer ${user.token}` } };
-            await axios.delete(`/api/categories/${id}`, config);
+            await api.delete(`/categories/${id}`);
             setCategories(categories.filter(c => c._id !== id));
         } catch (err) {
             alert('Failed to delete category');
@@ -82,8 +75,7 @@ const Dashboard = () => {
 
     const handleUpdateCategory = async (id, newName) => {
         try {
-            const config = { headers: { Authorization: `Bearer ${user.token}` } };
-            const { data } = await axios.put(`/api/categories/${id}`, { name: newName }, config);
+            const { data } = await api.put(`/categories/${id}`, { name: newName });
             setCategories(categories.map(c => c._id === id ? data : c));
             setEditingCat(null);
         } catch (err) {
@@ -94,10 +86,7 @@ const Dashboard = () => {
     const handleDelete = async (id) => {
         if (!window.confirm('Are you sure you want to delete this expense?')) return;
         try {
-            const config = {
-                headers: { Authorization: `Bearer ${user.token}` },
-            };
-            await axios.delete(`/api/expenses/${id}`, config);
+            await api.delete(`/expenses/${id}`);
             setExpenses(expenses.filter(exp => exp._id !== id));
         } catch (err) {
             alert('Failed to delete expense');

@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import axios from 'axios';
+import api from '../api/axios';
 import {
     LayoutDashboard,
     ListFilter,
@@ -63,8 +63,8 @@ const Navbar = () => {
                                         key={item.path}
                                         to={item.path}
                                         className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-all ${location.pathname === item.path
-                                                ? 'bg-blue-600/10 text-blue-400 border border-blue-500/20'
-                                                : 'text-slate-400 hover:text-white hover:bg-white/5'
+                                            ? 'bg-blue-600/10 text-blue-400 border border-blue-500/20'
+                                            : 'text-slate-400 hover:text-white hover:bg-white/5'
                                             }`}
                                     >
                                         <item.icon className="w-4 h-4" />
@@ -208,8 +208,7 @@ const EditProfileForm = ({ onClose }) => {
         try {
             const fd = new FormData();
             fd.append('avatar', file);
-            const config = { headers: { 'Content-Type': 'multipart/form-data', Authorization: `Bearer ${user.token}` } };
-            const { data } = await axios.post('/api/auth/upload-avatar', fd, config);
+            const { data } = await api.post('/auth/upload-avatar', fd);
             updateUser({ profileImage: data.profileImage });
             setMsg({ text: 'Profile photo updated!', ok: true });
         } catch {
@@ -224,8 +223,7 @@ const EditProfileForm = ({ onClose }) => {
         setSaving(true);
         setMsg({ text: '', ok: true });
         try {
-            const config = { headers: { Authorization: `Bearer ${user.token}` } };
-            const { data } = await axios.put('/api/auth/update-profile', { name }, config);
+            const { data } = await api.put('/auth/update-profile', { name });
             updateUser({ name: data.name });
             setMsg({ text: 'Profile updated successfully!', ok: true });
             setTimeout(() => onClose(), 1200);
@@ -306,8 +304,7 @@ const ChangePasswordForm = ({ onClose }) => {
         setLoading(true);
         setMsg({ text: '', ok: true });
         try {
-            const config = { headers: { Authorization: `Bearer ${user.token}` } };
-            await axios.put('/api/auth/change-password', { currentPassword: form.current, newPassword: form.newPass }, config);
+            await api.put('/auth/change-password', { currentPassword: form.current, newPassword: form.newPass });
             setMsg({ text: 'Password changed successfully!', ok: true });
             setTimeout(() => onClose(), 1200);
         } catch (err) {

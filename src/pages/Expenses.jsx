@@ -10,7 +10,7 @@ import {
     ChevronRight,
     ArrowUpDown
 } from 'lucide-react';
-import axios from 'axios';
+import api from '../api/axios';
 import Navbar from '../components/Navbar';
 import { useNavigate } from 'react-router-dom';
 
@@ -24,10 +24,7 @@ const Expenses = () => {
 
     const fetchExpenses = async () => {
         try {
-            const config = {
-                headers: { Authorization: `Bearer ${user.token}` },
-            };
-            const { data } = await axios.get('/api/expenses', config);
+            const { data } = await api.get('/expenses');
             setExpenses(data);
         } catch (err) {
             console.error('Error fetching expenses:', err);
@@ -43,9 +40,7 @@ const Expenses = () => {
     const handleDelete = async (id) => {
         if (!window.confirm('Delete this transaction?')) return;
         try {
-            await axios.delete(`/api/expenses/${id}`, {
-                headers: { Authorization: `Bearer ${user.token}` },
-            });
+            await api.delete(`/expenses/${id}`);
             setExpenses(expenses.filter(exp => exp._id !== id));
         } catch (err) {
             alert('Delete failed');
