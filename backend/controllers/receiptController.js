@@ -24,8 +24,8 @@ export const analyzeReceipt = async (req, res) => {
         // Initialize Gemini
         const genAI = new GoogleGenerativeAI(apiKey);
 
-        // List of models to try in case of 404/availability issues
-        const modelsToTry = ["gemini-1.5-flash", "gemini-1.5-flash-8b", "gemini-1.5-flash-002"];
+        // List of models identified in diagnostic scan:
+        const modelsToTry = ["gemini-2.0-flash", "gemini-2.5-flash", "gemini-flash-latest", "gemini-1.5-flash"];
         let result = null;
         let lastError = null;
 
@@ -45,23 +45,24 @@ Return ONLY a raw JSON object. No markdown.`;
         // Try models one by one
         for (const modelName of modelsToTry) {
             try {
-                console.log(`Trying model: ${modelName}...`);
+                console.log(`Checking model: ${modelName}...`);
                 const model = genAI.getGenerativeModel({ model: modelName });
                 result = await model.generateContent([
                     prompt,
                     { inlineData: { data: imageBase64, mimeType } }
                 ]);
-                console.log(`Success with model: ${modelName}`);
-                break; // Exit loop on success
+                console.log(`✅ Success with model: ${modelName}`);
+                break;
             } catch (err) {
-                console.warn(`Model ${modelName} failed:`, err.message);
+                console.warn(`❌ Model ${modelName} failed:`, err.message);
                 lastError = err;
-                if (!err.message.includes('404')) break; // If it's not a 404 (e.g. Quota), don't bother trying others
+                // Try next model regardless of error type
+                continue;
             }
         }
 
         if (!result) {
-            throw new Error(`All Gemini models failed. Last error: ${lastError?.message}`);
+            throw new Error(`AI Scan failed. Please check if Gemini API is enabled in your Google Cloud Project. Last attempt error: ${lastError?.message}`);
         }
 
         const textResponse = result.response.text();
