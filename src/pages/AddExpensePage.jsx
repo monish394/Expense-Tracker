@@ -98,8 +98,9 @@ const AddExpensePage = () => {
             });
             setScanResults(data.imageUrl);
         } catch (err) {
-            setError('AI Scanning failed. Please fill manually.');
-            console.error(err);
+            const errorMsg = err.response?.data?.message || err.message || 'AI Scanning failed';
+            setError(`AI Error: ${errorMsg}. Please fill manually.`);
+            console.error('Scan Error:', err);
         } finally {
             setScanning(false);
         }

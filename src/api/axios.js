@@ -4,9 +4,8 @@ import axios from 'axios';
 const api = axios.create({
     // Using a relative path ensures the browser uses the current domain (e.g., your Render URL)
     baseURL: '/api',
-    headers: {
-        'Content-Type': 'application/json',
-    },
+    // Removed hardcoded Content-Type to allow Axios to automatically handle JSON and FormData
+    headers: {},
 });
 
 // Add a request interceptor to include the auth token in all requests
