@@ -49,7 +49,7 @@ app.get('/api/health', (req, res) => {
 });
 
 // For any other route, serve index.html if it exists, otherwise return 404
-app.get('/(.*)', (req, res) => {
+app.get('/:path*', (req, res) => {
     if (fs.existsSync(indexFile)) {
         res.sendFile(indexFile);
     } else {
