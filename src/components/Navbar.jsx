@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import api from '../api/axios';
+import logoImage from '../assets/logo.png';
 import {
     LayoutDashboard,
     ListFilter,
@@ -56,9 +57,7 @@ const Navbar = () => {
                         {/* Left Side: Logo & Desktop Links */}
                         <div className="flex items-center gap-8">
                             <Link to="/dashboard" className="flex items-center gap-2 group">
-                                <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-lg flex items-center justify-center shadow-lg shadow-blue-500/20 group-hover:scale-110 transition-transform">
-                                    <LayoutDashboard className="w-4 h-4 text-white" />
-                                </div>
+                                <img src={logoImage} alt="ExpTrack Logo" className="w-8 h-8 rounded-lg shadow-lg shadow-blue-500/20 group-hover:scale-110 transition-transform" />
                                 <span className="text-xl font-bold bg-gradient-to-r from-white to-slate-400 bg-clip-text text-transparent">
                                     ExpTrack
                                 </span>
