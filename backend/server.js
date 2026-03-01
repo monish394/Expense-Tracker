@@ -8,6 +8,7 @@ import expenseRoutes from './routes/expenseRoutes.js';
 import authRoutes from './routes/authRoutes.js';
 import categoryRoutes from './routes/categoryRoutes.js';
 import receiptRoutes from './routes/receiptRoutes.js';
+import fs from 'fs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -35,19 +36,31 @@ app.use('/api/auth', authRoutes);
 app.use('/api/categories', categoryRoutes);
 app.use('/api/receipts', receiptRoutes);
 
-// Basic Route
+// Serve frontend
+const buildPath = path.resolve(__dirname, '../dist');
+const indexFile = path.join(buildPath, 'index.html');
+
+// Serve static assets first
+app.use(express.static(buildPath));
+
+// Health check endpoint
 app.get('/api/health', (req, res) => {
     res.json({ message: 'Server is running perfectly!' });
 });
 
-// Serve frontend in production
-const buildPath = path.resolve(__dirname, '../dist');
-if (process.env.NODE_ENV === 'production') {
-    app.use(express.static(buildPath));
-    app.get('*', (req, res) => {
-        res.sendFile(path.join(buildPath, 'index.html'));
-    });
-}
+// For any other route, serve index.html if it exists, otherwise return 404
+app.get('*', (req, res) => {
+    if (fs.existsSync(indexFile)) {
+        res.sendFile(indexFile);
+    } else {
+        res.status(404).json({
+            message: 'No frontend build found. Please run "npm run build" and check your paths.',
+            currentDir: __dirname,
+            lookedAt: indexFile,
+            mode: process.env.NODE_ENV
+        });
+    }
+});
 
 // Start Server
 app.listen(PORT, () => {
