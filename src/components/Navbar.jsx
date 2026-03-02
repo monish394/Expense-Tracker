@@ -30,7 +30,7 @@ const Navbar = () => {
     const dropdownRef = useRef(null);
 
     const navItems = [
-        { label: 'Dashboard', path: '/', icon: LayoutDashboard },
+        { label: 'Dashboard', path: '/dashboard', icon: LayoutDashboard },
         { label: 'Expenses', path: '/expenses', icon: ListFilter },
         { label: 'Add Expense', path: '/add-expense', icon: PlusCircle },
     ];
@@ -57,7 +57,7 @@ const Navbar = () => {
                     <div className="flex justify-between h-16 items-center">
                         {/* Left Side: Logo & Desktop Links */}
                         <div className="flex items-center gap-8">
-                            <Link to={user ? "/" : "/home"} className="flex items-center gap-2 group">
+                            <Link to="/" className="flex items-center gap-2 group">
                                 <img src={logoImage} alt="ExpTrack Logo" className="w-8 h-8 rounded-lg shadow-lg shadow-blue-500/20 group-hover:scale-110 transition-transform" />
                                 <span className="text-xl font-bold bg-gradient-to-r from-white to-slate-400 bg-clip-text text-transparent">
                                     ExpTrack
@@ -121,7 +121,7 @@ const Navbar = () => {
                                                     labelClass="text-rose-400"
                                                     onClick={() => {
                                                         logout();
-                                                        navigate('/home');
+                                                        navigate('/');
                                                     }}
                                                 />
                                             </div>
