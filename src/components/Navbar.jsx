@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import api from '../api/axios';
 import logoImage from '../assets/logo.png';
@@ -22,6 +22,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 const Navbar = () => {
     const { logout, user } = useAuth();
     const location = useLocation();
+    const navigate = useNavigate();
     const [showProfileMenu, setShowProfileMenu] = useState(false);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [showEditProfile, setShowEditProfile] = useState(false);
@@ -56,7 +57,7 @@ const Navbar = () => {
                     <div className="flex justify-between h-16 items-center">
                         {/* Left Side: Logo & Desktop Links */}
                         <div className="flex items-center gap-8">
-                            <Link to="/dashboard" className="flex items-center gap-2 group">
+                            <Link to={user ? "/dashboard" : "/"} className="flex items-center gap-2 group">
                                 <img src={logoImage} alt="ExpTrack Logo" className="w-8 h-8 rounded-lg shadow-lg shadow-blue-500/20 group-hover:scale-110 transition-transform" />
                                 <span className="text-xl font-bold bg-gradient-to-r from-white to-slate-400 bg-clip-text text-transparent">
                                     ExpTrack
@@ -114,7 +115,15 @@ const Navbar = () => {
                                                 <MenuButton icon={<User className="w-3.5 h-3.5" />} label="Edit Profile" onClick={() => { setShowEditProfile(true); setShowProfileMenu(false); }} />
                                                 <MenuButton icon={<KeyRound className="w-3.5 h-3.5" />} label="Security" onClick={() => { setShowChangePassword(true); setShowProfileMenu(false); }} />
                                                 <div className="h-px bg-white/5 my-1" />
-                                                <MenuButton icon={<LogOut className="w-3.5 h-3.5 text-rose-400" />} label="Sign Out" labelClass="text-rose-400" onClick={logout} />
+                                                <MenuButton
+                                                    icon={<LogOut className="w-3.5 h-3.5 text-rose-400" />}
+                                                    label="Sign Out"
+                                                    labelClass="text-rose-400"
+                                                    onClick={() => {
+                                                        logout();
+                                                        navigate('/');
+                                                    }}
+                                                />
                                             </div>
                                         </motion.div>
                                     )}
