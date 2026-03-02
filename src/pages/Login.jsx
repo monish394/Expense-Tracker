@@ -35,7 +35,7 @@ const Login = () => {
     useEffect(() => {
         if (user) {
             console.log('User detected, redirecting to dashboard...');
-            navigate('/dashboard', { replace: true });
+            navigate('/', { replace: true });
         }
     }, [user, navigate]);
 
