@@ -11,7 +11,7 @@ import './App.css'
 function App() {
   return (
     <Routes>
-      <Route path="/" element={<Home />} />
+      <Route path="/" element={<Navigate to="/" replace><Home /></Navigate>} />
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
       <Route
