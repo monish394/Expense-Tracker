@@ -22,14 +22,14 @@ import { useAuth } from '../context/AuthContext';
 import logoImage from '../assets/logo.png';
 
 const Home = () => {
-    const { user } = useAuth();
+    const { user, loading } = useAuth();
     const navigate = useNavigate();
 
     useEffect(() => {
-        if (user) {
+        if (!loading && user) {
             navigate('/dashboard');
         }
-    }, [user, navigate]);
+    }, [user, loading, navigate]);
 
     const features = [
         {
@@ -89,12 +89,12 @@ const Home = () => {
             <nav className="fixed top-0 left-0 right-0 z-50 border-b border-white/5 bg-slate-900/50 backdrop-blur-xl">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="flex justify-between h-16 items-center">
-                        <div className="flex items-center gap-2">
-                            <img src={logoImage} alt="Logo" className="w-8 h-8 rounded-lg shadow-lg shadow-blue-500/20" />
+                        <Link to="/" className="flex items-center gap-2 group cursor-pointer">
+                            <img src={logoImage} alt="Logo" className="w-8 h-8 rounded-lg shadow-lg shadow-blue-500/20 transition-transform group-hover:scale-105" />
                             <span className="text-xl font-bold bg-gradient-to-r from-white to-slate-400 bg-clip-text text-transparent">
                                 ExpTrack
                             </span>
-                        </div>
+                        </Link>
                         <div className="flex items-center gap-4">
                             {user ? (
                                 <Link to="/dashboard" className="px-5 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-semibold transition-all shadow-lg shadow-blue-500/20 active:scale-95 text-sm">
