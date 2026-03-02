@@ -3,7 +3,7 @@ import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { loginSchema, validateField } from '../utils/validation';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Mail, Lock, Eye, EyeOff, Loader2, ArrowRight, RefreshCw, CheckCircle2 } from 'lucide-react';
+import { Mail, Lock, Eye, EyeOff, Loader2, ArrowRight, RefreshCw, CheckCircle2, ChevronLeft } from 'lucide-react';
 import { clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 
@@ -238,6 +238,14 @@ const Login = () => {
                 transition={{ duration: 0.4 }}
                 className="w-full max-w-md bg-white/5 backdrop-blur-xl border border-white/10 p-8 rounded-2xl shadow-2xl relative z-10"
             >
+                <Link
+                    to="/"
+                    className="inline-flex items-center gap-2 text-slate-400 hover:text-white text-sm mb-6 transition-colors group"
+                >
+                    <ChevronLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
+                    Back to Home
+                </Link>
+
                 <div className="text-center mb-8">
                     <h2 className="text-3xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
                         Welcome Back
