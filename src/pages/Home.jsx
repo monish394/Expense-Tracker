@@ -25,11 +25,13 @@ const Home = () => {
     const { user, loading } = useAuth();
     const navigate = useNavigate();
 
+    /* 
     useEffect(() => {
         if (!loading && user) {
             navigate('/dashboard');
         }
     }, [user, loading, navigate]);
+    */
 
     const features = [
         {
